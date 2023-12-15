@@ -30,15 +30,11 @@ namespace ToDoTest
 
             var newToDo = new ToDoNote
             {
-                Id = 22,
                 Text = "TestToDo",
                 IsDone = false,
             };
 
-
-
             //var blog = controller.GetBlog("Blog2").Value;
-
             //Assert.Equal("http://blog2.com", blog.Url);
 
             //processors to handle the post
@@ -48,7 +44,8 @@ namespace ToDoTest
             //ACT 
             //method for processing the request
             toDoController.PostToDo(newToDo);
-            Assert.Equal(22, toDoController.GetNote(newToDo.Id).Id);
+            var t = toDoController.GetNote(newToDo.Text);
+            Assert.Equal(newToDo.Text, toDoController.GetNote(newToDo.Text).Text);
 
             //AddToDoResult
 
