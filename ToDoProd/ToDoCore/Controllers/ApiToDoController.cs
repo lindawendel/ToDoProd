@@ -5,146 +5,153 @@ using ToDoCore.Data;
 
 namespace ToDoCore.Controllers
 {
-        [Route("/notes")]
-        //[Route("/api")]
-        //[Route("/example")]
-        [ApiController]
-        public class ApiController : ControllerBase
+    [Route("/notes")]
+    //[Route("/api")]
+    //[Route("/example")]
+    [ApiController]
+    public class ApiController : ControllerBase
+    {
+        private readonly ApiContext database;
+
+        public ApiController(ApiContext database)
         {
-            private readonly ApiContext database;
+            this.database = database;
+        }
 
-            public ApiController(ApiContext database)
+        //[HttpGet("notes")]
+        [HttpGet("/notes")]
+        public ToDoNote[] Get(bool? completed)
+        {
+            if (completed == null)
             {
-                this.database = database;
-            }
-
-            //[HttpGet("notes")]
-            [HttpGet("/notes")]
-            public ToDoNote[] Get(bool? completed)
-            {
-                if (completed == null)
-                {
-                    return database.ToDoNotes.ToArray();
-
-                }
-                else if (completed == true)
-                {
-                    return database.ToDoNotes.Where(m => m.IsDone == true).ToArray();
-
-                }
-                else if (completed == false)
-                {
-                    return database.ToDoNotes.Where(m => m.IsDone == false).ToArray();
-                }
-                //kanske inte en så bra lösning
-                else
-                {
-                    return default;
-                }
-            }
-
-            //[HttpGet("remaining")]
-            [HttpGet("/remaining")]
-            public int GetCount()
-            {
-
-                return database.ToDoNotes.Where(m => m.IsDone == false).Count();
+                return database.ToDoNotes.ToArray();
 
             }
-
-            //[HttpPost("notes")]
-            [HttpPost]
-            public ActionResult<ToDoNote> PostToDo(ToDoNote httpToDoNote)
+            else if (completed == true)
             {
-                var dbToDoNote = new ToDoNote
-                {
-                    Text = httpToDoNote.Text,
-                    IsDone = false
-                };
+                return database.ToDoNotes.Where(m => m.IsDone == true).ToArray();
 
-                database.ToDoNotes.Add(dbToDoNote);
-                database.SaveChanges();
-
-                return CreatedAtAction(nameof(Get), new { id = dbToDoNote.Id }, dbToDoNote);
             }
-
-            //[HttpPost("toggle-all")]
-            [HttpPost("/toggle-all")]
-            public void ToggleAll()
+            else if (completed == false)
             {
-                var notes = database.ToDoNotes.ToArray();
-
-                if (notes.Length == 0)
-                {
-                    return;
-                }
-
-                else if (notes.All(notes => notes.IsDone))
-                {
-                    foreach (var note in notes)
-                    {
-                        note.IsDone = false;
-                    }
-                }
-
-                else
-                {
-                    foreach (var note in notes)
-                    {
-                        note.IsDone = true;
-                    }
-                }
-
-                database.SaveChanges();
+                return database.ToDoNotes.Where(m => m.IsDone == false).ToArray();
             }
-
-            //[HttpPost("clear-completed")]
-            [HttpPost("/clear-completed")]
-            public void ClearCompletedNotes()
+            //kanske inte en så bra lösning
+            else
             {
-                var completedNotes = database.ToDoNotes.Where(m => m.IsDone).ToArray();
-
-                foreach (var note in completedNotes)
-                {
-                    database.ToDoNotes.Remove(note);
-                }
-                database.SaveChanges();
+                return default;
             }
+        }
 
-            //[HttpPut("notes/{id:int}")]
-            [HttpPut("{id:int}")]
-            public void ChangeNote(int id, ToDoNote updatedNote)
-            {
-                var noteToChange = database.ToDoNotes.FirstOrDefault(m => m.Id == id);
+        [HttpGet("getNote")]
+        public ToDoNote GetNote(string text)
+        {
+            var getNote = database.ToDoNotes.FirstOrDefault(m => m.Text == text);
+            return getNote;
+        }
 
-                if (noteToChange == null)
-                {
-                    return;
-                }
+        //[HttpGet("remaining")]
+        [HttpGet("/remaining")]
+        public int GetCount()
+        {
 
-                else if (!noteToChange.IsDone)
-                {
-                    noteToChange.IsDone = true;
-                }
-
-                else if (noteToChange.IsDone)
-                {
-                    noteToChange.IsDone = false;
-                }
-
-                database.ToDoNotes.Update(noteToChange);
-                database.SaveChanges();
-            }
-
-            //[HttpDelete("notes/{id:int}")]
-            [HttpDelete("{id:int}")]
-            public void DeleteNote(int id)
-            {
-                var noteToDelete = database.ToDoNotes.FirstOrDefault(m => m.Id == id);
-                database.ToDoNotes.Remove(noteToDelete);
-                database.SaveChanges();
-            }
+            return database.ToDoNotes.Where(m => m.IsDone == false).Count();
 
         }
+
+        //[HttpPost("notes")]
+        [HttpPost]
+        public ActionResult<ToDoNote> PostToDo(ToDoNote httpToDoNote)
+        {
+            var dbToDoNote = new ToDoNote
+            {
+                Text = httpToDoNote.Text,
+                IsDone = false
+            };
+
+            database.ToDoNotes.Add(dbToDoNote);
+            database.SaveChanges();
+
+            return CreatedAtAction(nameof(Get), new { id = dbToDoNote.Id }, dbToDoNote);
+        }
+
+        //[HttpPost("toggle-all")]
+        [HttpPost("/toggle-all")]
+        public void ToggleAll()
+        {
+            var notes = database.ToDoNotes.ToArray();
+
+            if (notes.Length == 0)
+            {
+                return;
+            }
+
+            else if (notes.All(notes => notes.IsDone))
+            {
+                foreach (var note in notes)
+                {
+                    note.IsDone = false;
+                }
+            }
+
+            else
+            {
+                foreach (var note in notes)
+                {
+                    note.IsDone = true;
+                }
+            }
+
+            database.SaveChanges();
+        }
+
+        //[HttpPost("clear-completed")]
+        [HttpPost("/clear-completed")]
+        public void ClearCompletedNotes()
+        {
+            var completedNotes = database.ToDoNotes.Where(m => m.IsDone).ToArray();
+
+            foreach (var note in completedNotes)
+            {
+                database.ToDoNotes.Remove(note);
+            }
+            database.SaveChanges();
+        }
+
+        //[HttpPut("notes/{id:int}")]
+        [HttpPut("{id:int}")]
+        public void ChangeNote(int id, ToDoNote updatedNote)
+        {
+            var noteToChange = database.ToDoNotes.FirstOrDefault(m => m.Id == id);
+
+            if (noteToChange == null)
+            {
+                return;
+            }
+
+            else if (!noteToChange.IsDone)
+            {
+                noteToChange.IsDone = true;
+            }
+
+            else if (noteToChange.IsDone)
+            {
+                noteToChange.IsDone = false;
+            }
+
+            database.ToDoNotes.Update(noteToChange);
+            database.SaveChanges();
+        }
+
+        //[HttpDelete("notes/{id:int}")]
+        [HttpDelete("{id:int}")]
+        public void DeleteNote(int id)
+        {
+            var noteToDelete = database.ToDoNotes.FirstOrDefault(m => m.Id == id);
+            database.ToDoNotes.Remove(noteToDelete);
+            database.SaveChanges();
+        }
+
+    }
 
 }

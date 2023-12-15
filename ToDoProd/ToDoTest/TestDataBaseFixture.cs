@@ -29,10 +29,10 @@ namespace ToDoTest
                         context.Database.EnsureDeleted();
                         context.Database.EnsureCreated();
                         context.AddRange(
-                            new ToDoNote { Id = 1, Text = "Milk", IsDone = false },
-                            new ToDoNote { Id = 1, Text = "Butter", IsDone = false },
-                            new ToDoNote { Id = 1, Text = "Bread", IsDone = true},
-                            new ToDoNote { Id = 1, Text = "Tomatoes", IsDone = false });
+                            new ToDoNote { Text = "Milk", IsDone = false },
+                            new ToDoNote { Text = "Butter", IsDone = false },
+                            new ToDoNote { Text = "Bread", IsDone = true },
+                            new ToDoNote { Text = "Tomatoes", IsDone = false });
                         context.SaveChanges();
                     }
                    
