@@ -13,11 +13,12 @@ namespace ToDoTest
     public class TestDatabaseFixture
     {
         private const string ConnectionString = @"Server=(localdb)\mssqllocaldb;Database=ToDoNotes;Trusted_Connection=True";
-            //@"Server=(localdb)\mssqllocaldb;Database=EFTestSample;Trusted_Connection=True";
 
         private static readonly object _lock = new();
         private static bool _databaseInitialized;
 
+        //Create and initialize a database with some example-data.
+        //For each test the database will be deleted and created again. 
         public TestDatabaseFixture()
         {
             lock (_lock)
@@ -35,9 +36,8 @@ namespace ToDoTest
                             new ToDoNote { Text = "Tomatoes", IsDone = false });
                         context.SaveChanges();
                     }
-                   
+              
                 }
-
                     _databaseInitialized = true;
                 }
             }

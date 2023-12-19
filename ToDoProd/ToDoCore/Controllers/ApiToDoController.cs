@@ -2,7 +2,6 @@
 using ToDoCore.Models;
 using ToDoCore.Data;
 
-
 namespace ToDoCore.Controllers
 {
     [Route("/notes")]
@@ -43,36 +42,33 @@ namespace ToDoCore.Controllers
             }
         }
 
-        [HttpGet("getNote")]
-        public ToDoNote GetNote(string text)
-        {
-            var getNote = database.ToDoNotes.FirstOrDefault(m => m.Text == text);
-            return getNote;
-        }
-
         //[HttpGet("remaining")]
         [HttpGet("/remaining")]
         public int GetCount()
         {
-
             return database.ToDoNotes.Where(m => m.IsDone == false).Count();
-
         }
 
         //[HttpPost("notes")]
         [HttpPost]
-        public ActionResult<ToDoNote> PostToDo(ToDoNote httpToDoNote)
+       public ActionResult<ToDoNote> PostToDo(ToDoNote httpToDoNote)
+        //public ActionResult PostToDo(ToDoNote httpToDoNote)
         {
-            var dbToDoNote = new ToDoNote
+            if (httpToDoNote is null)
             {
-                Text = httpToDoNote.Text,
-                IsDone = false
-            };
+                throw new ArgumentNullException(nameof(httpToDoNote));
+            }
 
-            database.ToDoNotes.Add(dbToDoNote);
-            database.SaveChanges();
+            var dbToDoNote = new ToDoNote
+                {
+                    Text = httpToDoNote.Text,
+                    IsDone = false
+                };
 
-            return CreatedAtAction(nameof(Get), new { id = dbToDoNote.Id }, dbToDoNote);
+                database.ToDoNotes.Add(dbToDoNote);
+                database.SaveChanges();
+
+                return CreatedAtAction(nameof(Get), new { id = dbToDoNote.Id }, dbToDoNote);
         }
 
         //[HttpPost("toggle-all")]

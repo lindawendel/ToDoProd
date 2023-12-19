@@ -7,8 +7,8 @@ namespace ToDoCore.Data
 {
     public class ApiContext : DbContext
     {
-        //public ApiContext()
-        //{ }
+        public ApiContext()
+        { }
 
         public ApiContext(DbContextOptions<ApiContext> options)
                    : base(options)
@@ -16,7 +16,5 @@ namespace ToDoCore.Data
         }
 
         public DbSet<ToDoNote> ToDoNotes { get; set; } = default!;
-        //public DbSet<ToDoNote> ToDoNotes => Set<ToDoNote>();
-
     }
 }
