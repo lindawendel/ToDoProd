@@ -25,4 +25,4 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release ToDoProd/ToDoCore/ToDoCore.csproj
     - name: Test
-      run: dotnet test --no-build --verbosity normal ToDoProd/ToDoCore/ToDoTest.csproj
+      run: dotnet test --no-build --verbosity normal ToDoProd/ToDoTest/ToDoTest.csproj
