@@ -1,0 +1,2 @@
+- Du kommer se att jag deleteat branches fast man inte får. Jag fick problem med skapandet av GitHub actions (builden kunde inte identifiera mina solution-files), och därför testade jag att göra MÅNGA olika versioner och PR's.
+  Det såg så fult ut att jag deleteade dessa branches, innan jag kom på att jag bara kunde stängt PRen istället. Så ingen kod-branch har deleteats, enbart branches med Yaml-filer. 
