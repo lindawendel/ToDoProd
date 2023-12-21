@@ -28,16 +28,12 @@ namespace ToDoTest
 
             //ACT
 
-
-
-
-
-
+            var response = toDoController.Get(null);
+            var notesFromDb = context.ToDoNotes;
 
             //ASSERT
 
-
-
+            Assert.Equal(response.Count(), notesFromDb.Count());
 
         }
 
