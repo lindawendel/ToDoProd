@@ -4,9 +4,8 @@ using ToDoCore.Data;
 
 namespace ToDoCore.Controllers
 {
-    [Route("/notes")]
-    //[Route("/api")]
-    //[Route("/example")]
+    [Route("/notes")] 
+   
     [ApiController]
     public class ApiController : ControllerBase
     {
