@@ -49,8 +49,6 @@ namespace ToDoTest
                 Assert.Equal(responseToDo.Text, inputToDo.Text);
                 Assert.Equal(responseToDo.IsDone, inputToDo.IsDone);
             }
-
-            Dispose();
         }
              
        
@@ -81,7 +79,6 @@ namespace ToDoTest
                 Assert.Equal(dataBaseNote.Text, inputToDo.Text);
                 Assert.Equal(dataBaseNote.IsDone, inputToDo.IsDone);
             }
-            Dispose();
         }
 
 
@@ -96,7 +93,6 @@ namespace ToDoTest
             //ACT AND ASSERT
             Assert.Throws<ArgumentNullException>(() => toDoController.PostToDo(null!));
             }
-            Dispose();
         }
     }
 

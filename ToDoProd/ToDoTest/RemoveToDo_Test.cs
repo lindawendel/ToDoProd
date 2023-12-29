@@ -12,7 +12,7 @@ namespace ToDoTest
     {
         //REQUIREMENTS
         // when an API-request to DeleteNote is made, we expect that
-        // the ToDo is removed and the count is updated. 
+        // the specific ToDo is removed and the count is updated. 
 
         public RemoveToDo_Test(TestDatabaseFixture fixture)
        => Fixture = fixture;
@@ -33,10 +33,10 @@ namespace ToDoTest
             {
                 var toDoController = new ApiController(context);
 
-                //ACT & ASSERT
-                Assert.Throws<Exception>(() => toDoController.DeleteNote(10));
+            //ACT & ASSERT
+
+                Assert.Throws<Exception>(() => toDoController.DeleteNote(789));
             }
-            Dispose();
         }
 
         [Fact]
@@ -49,15 +49,25 @@ namespace ToDoTest
             {
                 var toDoController = new ApiController(context);
 
-                //ACT
+            
+            //ACT
 
-                toDoController.DeleteNote(1);
-                var response = toDoController.Get(null);
+                var initialResponse = toDoController.Get(null);
+                var idToDelete = initialResponse[0].Id;
+                toDoController.DeleteNote(idToDelete);
+                var secondResponse = toDoController.Get(null);
 
-                Assert.Equal(3, response.Count());
+
+            //ASSERT
+
+                Assert.Equal(4, initialResponse.Count());
+                Assert.Equal(3, secondResponse.Count());
+
+                foreach (var response in secondResponse)
+                {
+                    Assert.NotEqual(response.Id, idToDelete);
+                }
             }
-            Dispose();
         }
-
     }
 }
