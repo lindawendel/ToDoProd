@@ -142,9 +142,18 @@ namespace ToDoCore.Controllers
         [HttpDelete("{id:int}")]
         public void DeleteNote(int id)
         {
-            var noteToDelete = database.ToDoNotes.FirstOrDefault(m => m.Id == id);
-            database.ToDoNotes.Remove(noteToDelete);
-            database.SaveChanges();
+            //ADDED
+            if (database.ToDoNotes.Where(_ => _.Id == id).Count() == 0)
+            {
+                throw new Exception("Id not found");
+            }
+            else
+            {
+                var noteToDelete = database.ToDoNotes.FirstOrDefault(m => m.Id == id);
+
+                database.ToDoNotes.Remove(noteToDelete);
+                database.SaveChanges();
+            }
         }
 
     }

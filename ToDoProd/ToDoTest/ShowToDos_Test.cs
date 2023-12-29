@@ -38,8 +38,6 @@ namespace ToDoTest
 
                 Assert.Equal(response.Count(), notesFromDb.Count());
             }
-            Dispose();
-
         }
 
         [Fact]
@@ -49,6 +47,7 @@ namespace ToDoTest
 
             //Initializes DB with four notes(ToDos)
             // Three of these notes are set to IsDone = false.
+
             using (var context = Fixture.CreateContext())
             {
                 var toDoController = new ApiController(context);
@@ -68,8 +67,6 @@ namespace ToDoTest
                     Assert.False(note.IsDone);
                 }
             }
-            Dispose();
-
         }
 
     }
