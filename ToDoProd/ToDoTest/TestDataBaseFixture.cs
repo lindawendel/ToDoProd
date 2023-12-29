@@ -50,42 +50,4 @@ namespace ToDoTest
     {
     }
 
-
-
-
-
-
-    //private static readonly object _lock = new();
-    //private static bool _databaseInitialized;
-
-    ////Create and initialize a database with some example-data.
-    ////For each test the database will be deleted and created again. 
-    //public TestDatabaseFixture()
-    //{
-    //    lock (_lock)
-    //    {
-    //        if (!_databaseInitialized)
-    //        {
-    //            using (var context = CreateContext())
-    //            {
-    //                context.Database.EnsureDeleted();
-    //                context.Database.EnsureCreated();
-    //                context.AddRange(
-    //                    new ToDoNote { Text = "Milk", IsDone = false },
-    //                    new ToDoNote { Text = "Butter", IsDone = false },
-    //                    new ToDoNote { Text = "Bread", IsDone = true },
-    //                    new ToDoNote { Text = "Tomatoes", IsDone = false });
-    //                context.SaveChanges();
-    //            }
-
-    //        }
-    //            _databaseInitialized = true;
-    //    }
-    //}
-
-    //public ApiContext CreateContext()
-    //   => new ApiContext(
-    //       new DbContextOptionsBuilder<ApiContext>()
-    //           .UseSqlServer(ConnectionString)
-    //           .Options);
 }
