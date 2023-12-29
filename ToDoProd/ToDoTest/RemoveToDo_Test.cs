@@ -7,7 +7,8 @@ using ToDoCore.Controllers;
 
 namespace ToDoTest
 {
-    public class RemoveToDo_Test : IClassFixture<TestDatabaseFixture>
+    [Collection("Tests")]
+    public class RemoveToDo_Test : IDisposable
     {
         //REQUIREMENTS
         // when an API-request to DeleteNote is made, we expect that
@@ -18,6 +19,9 @@ namespace ToDoTest
 
         public TestDatabaseFixture Fixture { get; }
 
+        public void Dispose()
+             => Fixture.Cleanup();
+
 
         [Fact]
         public void Should_Throw_Exception_On_Attempt_To_Remove_Nonexisting_ToDo()
@@ -25,11 +29,14 @@ namespace ToDoTest
             //ARRANGE
 
             //Initialize Db with four notes (see TestDataBaseFixture.cs )
-            using var context = Fixture.CreateContext();
-            var toDoController = new ApiController(context);
+            using (var context = Fixture.CreateContext())
+            {
+                var toDoController = new ApiController(context);
 
-            //ACT & ASSERT
-            Assert.Throws<Exception>(() => toDoController.DeleteNote(10));
+                //ACT & ASSERT
+                Assert.Throws<Exception>(() => toDoController.DeleteNote(10));
+            }
+            Dispose();
         }
 
         [Fact]
@@ -38,15 +45,18 @@ namespace ToDoTest
             //ARRANGE
 
             //Initialize Db with four notes (see TestDataBaseFixture.cs )
-            using var context = Fixture.CreateContext();
-            var toDoController = new ApiController(context);
+            using (var context = Fixture.CreateContext())
+            {
+                var toDoController = new ApiController(context);
 
-            //ACT
+                //ACT
 
-            toDoController.DeleteNote(1);
-            var response = toDoController.Get(null);
+                toDoController.DeleteNote(1);
+                var response = toDoController.Get(null);
 
-            Assert.Equal(3, response.Count());
+                Assert.Equal(3, response.Count());
+            }
+            Dispose();
         }
 
     }
