@@ -9,7 +9,8 @@ using ToDoCore.Models;
 
 namespace ToDoTest
 {
-    public class AddToDoTest : IClassFixture<TestDatabaseFixture>
+    [Collection("Tests")]
+    public class AddToDoTest : IDisposable
     {
         //REQUIREMENTS
         // when data an API-request is made, we expect that
@@ -20,71 +21,161 @@ namespace ToDoTest
         => Fixture = fixture;
 
         public TestDatabaseFixture Fixture { get; }
-    
+        public void Dispose()
+             => Fixture.Cleanup();
 
         [Fact]
         public void Should_Return_PostToDo_Response_With_Details()
         {
             // ARRANGE
 
-            using var context = Fixture.CreateContext();
-            var toDoController = new ApiController(context);
-
-            ToDoNote inputToDo = new ToDoNote
+            using (var context = Fixture.CreateContext())
             {
-                Text = "TestToDo",
-                IsDone = false,
-            };
+                var toDoController = new ApiController(context);
 
-            //ACT 
-           
-            var response = toDoController.PostToDo(inputToDo).Result as CreatedAtActionResult;
-            ToDoNote responseToDo = response.Value as ToDoNote;
+                ToDoNote inputToDo = new ToDoNote
+                {
+                    Text = "TestToDo",
+                    IsDone = false,
+                };
+
+                //ACT 
+
+                var response = toDoController.PostToDo(inputToDo).Result as CreatedAtActionResult;
+                ToDoNote responseToDo = response.Value as ToDoNote;
 
 
-            //Assert
-            Assert.Equal(responseToDo.Text, inputToDo.Text);
-            Assert.Equal(responseToDo.IsDone, inputToDo.IsDone);
+                //Assert
+                Assert.Equal(responseToDo.Text, inputToDo.Text);
+                Assert.Equal(responseToDo.IsDone, inputToDo.IsDone);
+            }
+
+            Dispose();
         }
-
+             
+       
         [Fact]
         public void Should_Return_Database_Query_Response_With_Details_After_Posting_ToDo()
         {
 
             //ARRANGE
-            using var context = Fixture.CreateContext();
-            var toDoController = new ApiController(context);
-
-            ToDoNote inputToDo = new ToDoNote
+            using (var context = Fixture.CreateContext())
             {
-                Text = "TestToDo",
-                IsDone = false,
-            };
+                var toDoController = new ApiController(context);
 
-            //ACT
+                ToDoNote inputToDo = new ToDoNote
+                {
+                    Text = "TestToDo",
+                    IsDone = false,
+                };
 
-            var postResponse = toDoController.PostToDo(inputToDo).Result as CreatedAtActionResult;
-            ToDoNote responseToDo = postResponse.Value as ToDoNote;
+                //ACT
 
-            var dataBaseNote = context.ToDoNotes.Where(note => note.Id == responseToDo.Id).FirstOrDefault();
+                var postResponse = toDoController.PostToDo(inputToDo).Result as CreatedAtActionResult;
+                ToDoNote responseToDo = postResponse.Value as ToDoNote;
+
+                var dataBaseNote = context.ToDoNotes.Where(note => note.Id == responseToDo.Id).FirstOrDefault();
 
 
-            //ASSERT
-            Assert.Equal(dataBaseNote.Text, inputToDo.Text);
-            Assert.Equal(dataBaseNote.IsDone, inputToDo.IsDone);
-
+                //ASSERT
+                Assert.Equal(dataBaseNote.Text, inputToDo.Text);
+                Assert.Equal(dataBaseNote.IsDone, inputToDo.IsDone);
+            }
+            Dispose();
         }
+
 
         [Fact]
         public void Should_Throw_Exception_For_Null_Request()
         {
             // ARRANGE
-            using var context = Fixture.CreateContext();
+            using (var context = Fixture.CreateContext())
+            { 
             var toDoController = new ApiController(context);
 
             //ACT AND ASSERT
             Assert.Throws<ArgumentNullException>(() => toDoController.PostToDo(null!));
-
+            }
+            Dispose();
         }
     }
+
+    //public class AddToDoTest : IClassFixture<TestDatabaseFixture>
+    //{
+    //    //REQUIREMENTS
+    //    // when data an API-request is made, we expect that
+    //    // all details are included in the response and that the
+    //    // database is updated
+
+    //    public AddToDoTest(TestDatabaseFixture fixture)
+    //    => Fixture = fixture;
+
+    //    public TestDatabaseFixture Fixture { get; }
+
+
+    //    [Fact]
+    //    public void Should_Return_PostToDo_Response_With_Details()
+    //    {
+    //        // ARRANGE
+
+    //        using var context = Fixture.CreateContext();
+    //        var toDoController = new ApiController(context);
+
+    //        ToDoNote inputToDo = new ToDoNote
+    //        {
+    //            Text = "TestToDo",
+    //            IsDone = false,
+    //        };
+
+    //        //ACT 
+
+    //        var response = toDoController.PostToDo(inputToDo).Result as CreatedAtActionResult;
+    //        ToDoNote responseToDo = response.Value as ToDoNote;
+
+
+    //        //Assert
+    //        Assert.Equal(responseToDo.Text, inputToDo.Text);
+    //        Assert.Equal(responseToDo.IsDone, inputToDo.IsDone);
+    //    }
+
+    //    [Fact]
+    //    public void Should_Return_Database_Query_Response_With_Details_After_Posting_ToDo()
+    //    {
+
+    //        //ARRANGE
+    //        using var context = Fixture.CreateContext();
+    //        var toDoController = new ApiController(context);
+
+    //        ToDoNote inputToDo = new ToDoNote
+    //        {
+    //            Text = "TestToDo",
+    //            IsDone = false,
+    //        };
+
+    //        //ACT
+
+    //        var postResponse = toDoController.PostToDo(inputToDo).Result as CreatedAtActionResult;
+    //        ToDoNote responseToDo = postResponse.Value as ToDoNote;
+
+    //        var dataBaseNote = context.ToDoNotes.Where(note => note.Id == responseToDo.Id).FirstOrDefault();
+
+
+    //        //ASSERT
+    //        Assert.Equal(dataBaseNote.Text, inputToDo.Text);
+    //        Assert.Equal(dataBaseNote.IsDone, inputToDo.IsDone);
+
+    //    }
+
+    //    [Fact]
+    //    public void Should_Throw_Exception_For_Null_Request()
+    //    {
+    //        // ARRANGE
+    //        using var context = Fixture.CreateContext();
+    //        var toDoController = new ApiController(context);
+
+    //        //ACT AND ASSERT
+    //        Assert.Throws<ArgumentNullException>(() => toDoController.PostToDo(null!));
+
+    //    }
+    //}
 }
