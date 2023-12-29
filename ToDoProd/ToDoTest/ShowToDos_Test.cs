@@ -7,12 +7,16 @@ using ToDoCore.Controllers;
 
 namespace ToDoTest
 {
-    public class ShowToDos_Test : IClassFixture<TestDatabaseFixture>
+    [Collection("Tests")]
+    public class ShowToDos_Test : IDisposable
     {
         public ShowToDos_Test(TestDatabaseFixture fixture)
        => Fixture = fixture;
 
         public TestDatabaseFixture Fixture { get; }
+
+        public void Dispose()
+             => Fixture.Cleanup();
 
         [Fact]
         public void Should_Return_All_ToDos_From_Db()
@@ -21,17 +25,20 @@ namespace ToDoTest
             //ARRANGE
 
             //Initializes DB with four notes(ToDos) -> See TestDataBaseFixture.cs
-            using var context = Fixture.CreateContext();
-            var toDoController = new ApiController(context);
+            using (var context = Fixture.CreateContext())
+            {
+                var toDoController = new ApiController(context);
 
-            //ACT
+                //ACT
 
-            var response = toDoController.Get(null);
-            var notesFromDb = context.ToDoNotes;
+                var response = toDoController.Get(null);
+                var notesFromDb = context.ToDoNotes;
 
-            //ASSERT
+                //ASSERT
 
-            Assert.Equal(response.Count(), notesFromDb.Count());
+                Assert.Equal(response.Count(), notesFromDb.Count());
+            }
+            Dispose();
 
         }
 
@@ -42,25 +49,86 @@ namespace ToDoTest
 
             //Initializes DB with four notes(ToDos)
             // Three of these notes are set to IsDone = false.
-            using var context = Fixture.CreateContext();
-            var toDoController = new ApiController(context);
-
-            //ACT
-
-            var response = toDoController.Get(false);
-            var allNotesFromDb = context.ToDoNotes;
-            var notDoneNotesFromDb = context.ToDoNotes.Where(x => !x.IsDone).ToList();
-
-
-            //ASSERT
-            Assert.NotEqual(response.Count(), allNotesFromDb.Count());
-            Assert.Equal(response.Count(), notDoneNotesFromDb.Count());
-            foreach (var note in response)
+            using (var context = Fixture.CreateContext())
             {
-                Assert.False(note.IsDone);
+                var toDoController = new ApiController(context);
+
+                //ACT
+
+                var response = toDoController.Get(false);
+                var allNotesFromDb = context.ToDoNotes;
+                var notDoneNotesFromDb = context.ToDoNotes.Where(x => !x.IsDone).ToList();
+
+
+                //ASSERT
+                Assert.NotEqual(response.Count(), allNotesFromDb.Count());
+                Assert.Equal(response.Count(), notDoneNotesFromDb.Count());
+                foreach (var note in response)
+                {
+                    Assert.False(note.IsDone);
+                }
             }
-        
+            Dispose();
+
         }
 
     }
+
+
+    //public class ShowToDos_Test : IClassFixture<TestDatabaseFixture>
+    //{
+    //    public ShowToDos_Test(TestDatabaseFixture fixture)
+    //   => Fixture = fixture;
+
+    //    public TestDatabaseFixture Fixture { get; }
+
+    //    [Fact]
+    //    public void Should_Return_All_ToDos_From_Db()
+    //    {
+
+    //        //ARRANGE
+
+    //        //Initializes DB with four notes(ToDos) -> See TestDataBaseFixture.cs
+    //        using var context = Fixture.CreateContext();
+    //        var toDoController = new ApiController(context);
+
+    //        //ACT
+
+    //        var response = toDoController.Get(null);
+    //        var notesFromDb = context.ToDoNotes;
+
+    //        //ASSERT
+
+    //        Assert.Equal(response.Count(), notesFromDb.Count());
+
+    //    }
+
+    //    [Fact]
+    //    public void Should_Return_Not_Done_ToDos_From_Db()
+    //    {
+    //        // ARRANGE
+
+    //        //Initializes DB with four notes(ToDos)
+    //        // Three of these notes are set to IsDone = false.
+    //        using var context = Fixture.CreateContext();
+    //        var toDoController = new ApiController(context);
+
+    //        //ACT
+
+    //        var response = toDoController.Get(false);
+    //        var allNotesFromDb = context.ToDoNotes;
+    //        var notDoneNotesFromDb = context.ToDoNotes.Where(x => !x.IsDone).ToList();
+
+
+    //        //ASSERT
+    //        Assert.NotEqual(response.Count(), allNotesFromDb.Count());
+    //        Assert.Equal(response.Count(), notDoneNotesFromDb.Count());
+    //        foreach (var note in response)
+    //        {
+    //            Assert.False(note.IsDone);
+    //        }
+
+    //    }
+
+    //}
 }
